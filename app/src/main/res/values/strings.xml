@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">TikkaMasala</string>
+
+    <string name="username">Username</string>
+    <string name="login">Login</string>
+    <string name="remember_username">Remember username</string>
+    <string name="send">Send</string>
+    <string name="username_cant_be_empty">Username can\'t be empty</string>
+</resources>
