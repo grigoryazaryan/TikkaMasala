@@ -4,14 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text_username"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=""/>
-
     <android.support.v7.widget.RecyclerView
-        android:background="@color/colorAccent"
         android:id="@+id/recycler_view_messages_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

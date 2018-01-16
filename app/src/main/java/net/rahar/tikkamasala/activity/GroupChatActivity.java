@@ -1,7 +1,6 @@
 package net.rahar.tikkamasala.activity;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +10,6 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import net.rahar.tikkamasala.R;
 
@@ -19,8 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import adapter.GroupChatMessagesListAdapter;
-import helpers.C;
-import helpers.RandomString;
 import model.Message;
 import tcp_client.TCPClient;
 
@@ -69,34 +65,33 @@ public class GroupChatActivity extends AppCompatActivity {
                     }
                 }).connect();
 
-        ((TextView) findViewById(R.id.text_username)).setText(getIntent().getStringExtra(C.KEY_USERNAME));
+//        getIntent().getStringExtra(C.KEY_USERNAME);
+
 
         buttonSend.setOnClickListener(v -> {
             String msg = editTextMessage.getText().toString();
             if (!TextUtils.isEmpty(msg))
                 tcpClient.sendMessage(msg);
+            editTextMessage.setText("");
         });
 
-        Handler h = new Handler();
-        h.post(new Runnable() {
-            @Override
-            public void run() {
-//                EventBus.getDefault().post(new EventBusMessage(new Message("hehehhey")));
-                String generatedString = new RandomString().nextString();
-                Log.v(TAG, generatedString);
-                onMessage(new Message(generatedString));
-                h.postDelayed(this, 600);
-            }
-        });
+//        Handler h = new Handler();
+//        h.post(new Runnable() {
+//            @Override
+//            public void run() {
+////                EventBus.getDefault().post(new EventBusMessage(new Message("hehehhey")));
+//                String generatedString = new RandomString().nextString();
+//                Log.v(TAG, generatedString);
+//                onMessage(new Message(generatedString));
+//                h.postDelayed(this, 600);
+//            }
+//        });
 
     }
 
     private void onMessage(Message message) {
-        messagesList.add(message);
-        Log.v(TAG, ", " + message.getMessage() + ", " + messagesList.size());
-//        messagesAdapter.notifyItemInserted(messagesList.size() - 1);
-//        messagesAdapter.addItem(message);
-        messagesAdapter.notifyDataSetChanged();
+        messagesAdapter.addItem(message);
+        recyclerViewMessages.smoothScrollToPosition(messagesAdapter.getItemCount() - 1);
     }
 
 //    @Subscribe

@@ -1,7 +1,6 @@
 package adapter;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,6 @@ public class GroupChatMessagesListAdapter extends RecyclerView.Adapter<GroupChat
 
 
     public GroupChatMessagesListAdapter(List<Message> data){
-        setHasStableIds(false);
         dataSet = data;
     }
 
@@ -35,12 +33,12 @@ public class GroupChatMessagesListAdapter extends RecyclerView.Adapter<GroupChat
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Log.v("adap", position + ", " + dataSet.get(position).getMessage() + ", " + dataSet.size() + ", " + getItemCount());
         holder.message.setText(dataSet.get(position).getMessage());
     }
 
     public void addItem(Message m){
         dataSet.add(m);
+        notifyItemInserted(dataSet.size() - 1);
     }
 
     @Override
