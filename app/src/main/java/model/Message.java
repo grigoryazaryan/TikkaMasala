@@ -9,8 +9,8 @@ package model;
  * Can be modified to more complicated object
  */
 public class Message {
-    private String sender;
-    private String message;
+    public String sender;
+    public String message;
 
     public Message(String message) {
         this.message = message;
@@ -22,6 +22,7 @@ public class Message {
 
     @Override
     public String toString() {
-        return "message: " + message;
+        return "sender: " + sender
+                + " message: " + message;
     }
 }

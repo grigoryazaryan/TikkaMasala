@@ -19,13 +19,10 @@ public class TCPClient {
 
             @Override
             protected String doInBackground(String... strings) {
-                connection = new TCPConnection(new TCPConnection.TCPConnectionListener() {
-                    @Override
-                    public void onSocketMessage(String message) {
-                        //may do some stuff like parse message and share it to listeners
-                        //EventBus.getDefault().post(new EventBusMessage(new Message(message)));
-                        publishProgress(message);
-                    }
+                connection = new TCPConnection(message -> {
+                    //may do some stuff like parse message and share it to listeners
+                    //EventBus.getDefault().post(new EventBusMessage(new Message(message)));
+                    publishProgress(message);
                 });
                 connection.connect();
                 return null;
@@ -46,7 +43,7 @@ public class TCPClient {
         return this;
     }
 
-    public void sendMessage(String message) {
+    public void sendMessage(Message message) {
         if (connection != null) connection.writeToSocket(message);
     }
 
