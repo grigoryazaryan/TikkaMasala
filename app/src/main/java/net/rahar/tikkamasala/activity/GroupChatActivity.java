@@ -2,6 +2,7 @@ package net.rahar.tikkamasala.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
@@ -9,19 +10,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import com.google.gson.JsonSyntaxException;
+
 import net.rahar.tikkamasala.R;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import adapter.GroupChatMessagesListAdapter;
 import helpers.C;
-import model.Message;
+import helpers.Parser;
+import helpers.Utils;
+import model.AudioRecMessage;
+import model.ChatMessage;
+import model.TextMessage;
 import tcp_client.TCPClient;
 
 /**
@@ -38,7 +45,7 @@ public class GroupChatActivity extends AppCompatActivity {
     private Button buttonSend;
     private EditText editTextMessage;
 
-    private List<Message> messagesList;
+    private List<ChatMessage> messagesList;
 
     private TCPClient tcpClient;
 
@@ -52,6 +59,8 @@ public class GroupChatActivity extends AppCompatActivity {
 
         messagesList = new ArrayList<>();
 
+        userName = getIntent().getStringExtra(C.KEY_USERNAME);
+
         recyclerViewMessages = (RecyclerView) findViewById(R.id.recycler_view_messages_list);
         recyclerViewMessages.setLayoutManager(new LinearLayoutManager(this));
 
@@ -62,22 +71,25 @@ public class GroupChatActivity extends AppCompatActivity {
         buttonSpeak = (ImageButton) findViewById(R.id.button_speak);
         editTextMessage = (EditText) findViewById(R.id.text_message);
 
-
         tcpClient = new TCPClient()
                 .setListener(message -> {
-                    Log.v(TAG, "tcp onmsg: " + message);
-                    onMessageReceived(message);
+//                    Log.v(TAG, "tcp onmsg: " + message);
+                    try {
+                        ChatMessage msg = Parser.parseChatMessageFromGson(message);
+                        onMessageReceived(msg);
+                    } catch (JsonSyntaxException e) {
+                        TextMessage tm = new TextMessage(message);
+                        tm.setSender("anonymous");
+                        onMessageReceived(tm);
+                    }
                 }).connect();
-
-        userName = getIntent().getStringExtra(C.KEY_USERNAME);
 
 
         buttonSend.setOnClickListener(v -> {
             String msg = editTextMessage.getText().toString();
-            if (!TextUtils.isEmpty(msg)){
-                Message m = new Message(msg);
-                m.sender = userName;
-                tcpClient.sendMessage(m);
+            if (!TextUtils.isEmpty(msg)) {
+                TextMessage m = new TextMessage(msg);
+                sendMessage(m);
             }
             editTextMessage.setText("");
         });
@@ -89,17 +101,29 @@ public class GroupChatActivity extends AppCompatActivity {
 
     }
 
+    private void sendMessage(ChatMessage message) {
+        message.setSender(userName);
+        tcpClient.sendMessage(Parser.stringifyJsonChatMessage(message));
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.v(TAG, resultCode + ", " + data.getData());
         if (requestCode == CODE_RECORD_SOUND && resultCode == Activity.RESULT_OK) {
-
+            Uri uri = data.getData();
+//            MediaPlayer mediaPlayer = MediaPlayer.create(GroupChatActivity.this, uri);
+//            mediaPlayer.start();
+//            if(true) return;
+            try {
+                sendMessage(new AudioRecMessage(Utils.encodeFileToBase64Binary(uri, GroupChatActivity.this)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
-    private void onMessageReceived(Message message) {
-        messagesAdapter.addItem(message);
+    private void onMessageReceived(ChatMessage chatMessage) {
+        messagesAdapter.addItem(chatMessage);
         recyclerViewMessages.smoothScrollToPosition(messagesAdapter.getItemCount() - 1);
     }
 

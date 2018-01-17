@@ -11,8 +11,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import model.Message;
-
 /**
  * Created by grigory on 16/01/18.
  */
@@ -53,10 +51,10 @@ public class TCPConnection {
             }
         } catch (UnknownHostException e) {
             e.printStackTrace();
-//            reconnect();
+            reconnect();
         } catch (IOException e) {
             e.printStackTrace();
-//            reconnect();
+            reconnect();
         }
     }
 
@@ -72,25 +70,21 @@ public class TCPConnection {
         connect();
     }
 
-    private void freeOutResources(){
+    public void disconnect() {
+        connectionState = ConnectionState.DISCONNECTED;
         try {
-        out.flush();
-        out.close();
-        in.close();
-        socket.close();
+//        out.flush();
+//        out.close();
+//        in.close();
+            socket.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public void disconnect() {
-            connectionState = ConnectionState.DISCONNECTED;
-            Log.v(TAG, "disco");
-            listener.onConnectionStateChange(connectionState);
+        listener.onConnectionStateChange(connectionState);
 
     }
 
-    public TCPConnection writeToSocket(Message msg) {
+    public TCPConnection writeToSocket(String msg) {
         if (out != null && !out.checkError()) {
             out.println(msg);
             out.flush();
@@ -110,8 +104,5 @@ public class TCPConnection {
 
     public enum ConnectionState {
         DISCONNECTED, CONNECTED, RECONNECTING
-//        ConnectionState(String s) {
-//            name();
-//        }
     }
 }

@@ -2,8 +2,6 @@ package tcp_client;
 
 import android.os.AsyncTask;
 
-import model.Message;
-
 /**
  * Created by grigory on 16/01/18.
  */
@@ -19,11 +17,7 @@ public class TCPClient {
 
             @Override
             protected String doInBackground(String... strings) {
-                connection = new TCPConnection(message -> {
-                    //may do some stuff like parse message and share it to listeners
-                    //EventBus.getDefault().post(new EventBusMessage(new Message(message)));
-                    publishProgress(message);
-                });
+                connection = new TCPConnection(message -> publishProgress(message));
                 connection.connect();
                 return null;
             }
@@ -33,7 +27,7 @@ public class TCPClient {
             protected void onProgressUpdate(String... values) {
                 super.onProgressUpdate(values);
                 if (tcpClientListener != null)
-                    tcpClientListener.onMessage(new Message(values[0]));
+                    tcpClientListener.onMessage(values[0]);
             }
         };
     }
@@ -43,9 +37,13 @@ public class TCPClient {
         return this;
     }
 
-    public void sendMessage(Message message) {
-        if (connection != null) connection.writeToSocket(message);
+    public void sendMessage(String chatMessage) {
+        if (connection != null) connection.writeToSocket(chatMessage);
     }
+
+//    public void sendAudioRec(AudioRecMessage audioRecMessage) {
+//        if (connection != null) connection.writeToSocket(audioRecMessage);
+//    }
 
     public TCPClient connect() {
         taskRunner.execute();
@@ -62,9 +60,9 @@ public class TCPClient {
         /**
          * will be called on UI thread
          *
-         * @param message message object
+         * @param textMessage message object
          */
-        void onMessage(Message message);
+        void onMessage(String textMessage);
         default void onConnect(){}
     }
 

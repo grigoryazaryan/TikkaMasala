@@ -1,19 +1,19 @@
 package event_bus_event;
 
-import model.Message;
+import model.TextMessage;
 
 /**
  * Created by grigory on 16/01/18.
  */
 
 public class EventBusMessage {
-    private final Message message;
+    private final TextMessage textMessage;
 
-    public EventBusMessage(Message message) {
-        this.message = message;
+    public EventBusMessage(TextMessage textMessage) {
+        this.textMessage = textMessage;
     }
 
-    public Message getMessage() {
-        return message;
+    public TextMessage getTextMessage() {
+        return textMessage;
     }
 }
