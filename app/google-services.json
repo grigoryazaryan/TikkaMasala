@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "16092655613",
+    "firebase_url": "https://tikkamasala-b636e.firebaseio.com",
+    "project_id": "tikkamasala-b636e",
+    "storage_bucket": "tikkamasala-b636e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:16092655613:android:8e3e0d3eef13e414",
+        "android_client_info": {
+          "package_name": "net.rahar.tikkamasala"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "16092655613-b77gmbq3fiqilh20g3jl6gu1uobmsqom.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNDUb-3G76e-18K2TdgDbFs-RYAFvh8og"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

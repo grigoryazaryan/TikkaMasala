@@ -72,23 +72,26 @@ public class TCPConnection {
 
     public void disconnect() {
         connectionState = ConnectionState.DISCONNECTED;
-        try {
-//        out.flush();
-//        out.close();
-//        in.close();
-            socket.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        listener.onConnectionStateChange(connectionState);
-
+        new Thread(() -> {
+            try {
+                out.flush();
+                out.close();
+                in.close();
+                socket.close();
+                listener.onConnectionStateChange(connectionState);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     public TCPConnection writeToSocket(String msg) {
-        if (out != null && !out.checkError()) {
-            out.println(msg);
-            out.flush();
-        }
+        new Thread(() -> {
+            if (out != null && !out.checkError()) {
+                out.println(msg);
+                out.flush();
+            }
+        }).start();
         return this;
     }
 
